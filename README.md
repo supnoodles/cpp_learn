@@ -1,2 +1,3 @@
-# cpp_primer_exercises
-workthrough of exercises
+# c++ primer fifth edition
+
+bookmark : page 33
