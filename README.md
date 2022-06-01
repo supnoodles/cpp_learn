@@ -1,4 +1,5 @@
 - [Compilation Process](#compilation-process)
+- [EOF (End of File)](#eof-end-of-file)
 - [2) Variables & Basic Types](#2-variables--basic-types)
   - [Literals](#literals)
   - [Variable](#variable)
@@ -10,11 +11,21 @@
   - [decltype](#decltype)
   - [Defining our own data structures](#defining-our-own-data-structures)
   - [Writing out own header files](#writing-out-own-header-files)
+- [3) Strings, Vectors & Arrays](#3-strings-vectors--arrays)
+  - [String Library](#string-library)
+  - [Defining Strings](#defining-strings)
+  - [Operations on Strings](#operations-on-strings)
+  - [>> operator VS getline()](#-operator-vs-getline)
+  - [Vector Library](#vector-library)
 
 
 # Compilation Process
 
 ![](media/cpp_compilation.png)
+
+# EOF (End of File)
+* unix - ctrl + D
+* windows - (ctrl + z) then Enter
 
 # 2) Variables & Basic Types
 
@@ -155,3 +166,67 @@ int sugar = 15;
 std::string name;
 };
 ```
+
+# 3) Strings, Vectors & Arrays
+
+## String Library
+
+For the String section, assume
+```cpp
+#include <string>
+using std::string;
+using std::cin;
+using std::cout;
+```
+
+## Defining Strings
+```cpp
+// hiya
+string s1 = "hiya";
+// cccccccccc
+string s2(10, 'c');
+// a copy of the string literal hiya, without null char.
+string s3("hiya");
+```
+## Operations on Strings
+
+```cpp
+// send s to output stream os
+os << s;
+// input stream is accepts s
+is >> s;
+// true if string is empty
+s.empty();
+// number of chars in s
+s.size();
+// returns a reference to the char in position n in s.
+s[n];
+```
+
+## >> operator VS getline()
+* getline(arg1: input stream, arg2: string line)
+* cin ignores any leading whitespaces
+* getline() does not. One line is until a \n is encountered.
+* getline also does not store the new line .
+
+## Vector Library
+* a vector is a collection of objects, all of which have the same type.
+* a vector is often referred to as a container, because it contains other objects.
+* a vector is a **class template**, not a type. Types generated from vector must include the element type, e.g. ```vector<int>```
+
+```cpp
+#include <vector>
+using std::vector;
+
+// different ways of initialising
+vector<int> ivec;
+// following are equivalent
+vector<string> articles = {"a", "an", "the"};
+vector<string> articles{"a","an","the"};
+
+// add element to ivec
+ivec.push_back(3);
+```
+
+** 
+**bookmark: p.141**
