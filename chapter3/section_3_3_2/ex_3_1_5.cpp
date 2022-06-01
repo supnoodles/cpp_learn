@@ -1,16 +1,18 @@
 #include <vector>
 #include <iostream>
+#include <string>
 
 using std::cin;
 using std::cout;
+using std::string;
 using std::vector;
 
 int main(){
-    vector<int> vec;
-    int x;
+    vector<string> vec;
+    string str;
 
-    while (cin >> x){
-        vec.push_back(x);
+    while (cin >> str){
+        vec.push_back(str);
     }
 
     for (int i = 0; i < vec.size(); ++i){
