@@ -17,6 +17,15 @@
   - [Operations on Strings](#operations-on-strings)
   - [>> operator VS getline()](#-operator-vs-getline)
   - [Vector Library](#vector-library)
+  - [Iterators](#iterators)
+  - [Arrays](#arrays)
+  - [Pointers & arrays](#pointers--arrays)
+- [4) Expressions](#4-expressions)
+  - [lvalues and rvalues](#lvalues-and-rvalues)
+  - [combiing deref and increment in single expr](#combiing-deref-and-increment-in-single-expr)
+  - [member access operators](#member-access-operators)
+  - [```sizeof``` operator](#sizeof-operator)
+- [p.228](#p228)
 
 
 # Compilation Process
@@ -228,5 +237,83 @@ vector<string> articles{"a","an","the"};
 ivec.push_back(3);
 ```
 
-** 
-**bookmark: p.153**
+## Iterators
+
+* types that have members that return iterators have members called ```begin``` and ```end```.
+* ```begin`` denotes first element
+* ```end``` returns one past the end of the container.
+* if container is empty then begin and end return the same iterators.
+* we do not generally care about the types returned by iterators, so we use ```auto```.
+* to return constant iterators (access but not write, like constant pointers), we use ```cbegin``` and ```cend```.
+
+## Arrays
+
+* Like vectors, an array is a container of unnamed objects.
+* Unlike vectors, arrays have fixed size. Hence, they sometimes offer better runtime performacne.
+* when initialising arrays, the dimension specified must be a ```constexpr```.
+
+## Pointers & arrays
+
+```cpp
+string nums[] = {"one", "two", "three"};
+// the following are equivalent
+// they point to first element in array.
+string *p = &nums[0];
+string *p2 = nums;
+```cpp
+// iterarting over an array using iterators
+int arr[] = {0,1,2,3,4,5,6,7,8,9};
+int beg = begin(arr); 
+int end = end(arr); 
+// easy manipulation from here.
+```
+
+# 4) Expressions
+
+* unary operators - operators that work on one operand. e.g. &
+* binary operators - operators that work on two operands.
+* ternary operators - three operands.
+* overloaded operator - when operators have alternative meanings in their class types as compared to their built-in type
+
+## lvalues and rvalues
+
+* roughly speaking, when we use an object as an lvalue, we use the objects location in memory. When we use an object as an rvalue, we use the object's contents.
+* generally, we can use an lvalue when an rvalue is required, but we can't use an rvalue when an lvalue is required.
+
+* left hand operand of an assignment operator must be a **modifiable l value**
+
+* binary operators are left associative, assignment is right associative.
+
+## combiing deref and increment in single expr
+
+```cpp
+auto pbeg = v.begin();
+// print elements up to the first negative value
+while (pbeg != v.end() && *beg >= 0)
+  cout << *pbeg++ << endl; // print the current value and advance pbeg
+```
+* ```*pbeg++``` equivalent to ```*(pbeg)++```
+* pbeg increments pbeg and yields a copy of previous value of pbeg
+* * retrieves the unincrimented value of pbeg
+
+## member access operators
+
+```cpp
+string s1 = "a string", *p = &s1;
+auto n = s1.size(); // run the size member of the string s1
+n = (*p).size(); // run size on the object to which p points
+n = p->size(); // equivalent to (*p).size()
+```
+
+## ```sizeof``` operator
+
+  * ```sizeof``` returns size in byte of an expr or type. The return is a constexpr.
+  
+  ```cpp
+    int arr[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int size_arr = sizeof(arr) / sizeof(*arr);
+
+    // prints num of elements in arr.
+    cout << size_arr;
+  ```
+# p.228
