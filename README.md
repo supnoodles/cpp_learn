@@ -25,7 +25,14 @@
   - [combiing deref and increment in single expr](#combiing-deref-and-increment-in-single-expr)
   - [member access operators](#member-access-operators)
   - [```sizeof``` operator](#sizeof-operator)
-- [p.228](#p228)
+- [5) Statements](#5-statements)
+  - [switch cases](#switch-cases)
+  - [```do while```](#do-while)
+  - [```goto``` statement](#goto-statement)
+  - [```try``` blocks & exception handling](#try-blocks--exception-handling)
+    - [```throw``` exception](#throw-exception)
+    - [```try``` block](#try-block)
+    - [Standard exceptions](#standard-exceptions)
 
 
 # Compilation Process
@@ -316,4 +323,91 @@ n = p->size(); // equivalent to (*p).size()
     // prints num of elements in arr.
     cout << size_arr;
   ```
-# p.228
+
+# 5) Statements
+
+* expression statements are terminated by a ;
+* null satements are a single semicolon. Can be useful in reading from cin until a particular value is encountered.
+  
+```cpp
+while (cin >> s && s != sought){
+  ; // null statement. 
+}
+```
+
+## switch cases
+
+```cpp
+// initialize counters for each vowel
+unsigned aCnt = 0, eCnt = 0, iCnt = 0, oCnt = 0, uCnt = 0;
+char ch;
+while (cin >> ch) {
+ // if ch is a vowel, increment the appropriate counter
+ switch (ch) {
+    case 'a':
+      ++aCnt;
+      break;
+    case 'e':
+      ++eCnt;
+      break;
+    case 'i':
+      ++iCnt;
+      break;
+    case 'o':
+      ++oCnt;
+      break;
+    case 'u':
+      ++uCnt;
+      break; 
+    default:
+      cout << "nothing" << endl;
+      break;
+  }
+}
+```
+
+* case labels must be integral constant expressions
+* we must explicitly tell the compiler to stop i.e. ```break``` in each case, otherwise it continues with the other cases.
+* the ```default``` label is called if no other cases are called.
+
+## ```do while```
+
+* do while are first executed and then checked. Hence, they are always executed atleast once.
+
+## ```goto``` statement
+
+```cpp
+cout << "one" << endl;
+goto a;
+// two and three are skipped
+cout << "two" << endl;
+cout << "three" << endl;
+// we "goto" a
+a:
+  cout << "four" << endl;
+```
+
+## ```try``` blocks & exception handling
+
+### ```throw``` exception
+
+* consits of keyword ```throw``` followed by expression (the type of error to throw)
+  
+```cpp
+throw runtime_error("Data must refer to same ISBN");
+```
+
+### ```try``` block
+
+```cpp
+try {
+  int x = get_value()
+} catch (runtime_error err){
+  cour << err.what()
+}
+```
+
+### Standard exceptions
+
+* ```exception``` header defined general exceptions
+* ```stdexcept``` defines several general purpose exceptions. The exception types define a single operation ```what```. it accepts a ```const char*```, and its purpose is to give context.
