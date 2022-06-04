@@ -33,6 +33,25 @@
     - [```throw``` exception](#throw-exception)
     - [```try``` block](#try-block)
     - [Standard exceptions](#standard-exceptions)
+- [6) Functions](#6-functions)
+  - [function return types](#function-return-types)
+  - [```static```](#static)
+  - [function declarations](#function-declarations)
+  - [seperate compilation](#seperate-compilation)
+  - [Argument Passing](#argument-passing)
+    - [Pointer Parameters](#pointer-parameters)
+    - [Reference Parameters](#reference-parameters)
+    - [```const``` parameters](#const-parameters)
+    - [Array parameters](#array-parameters)
+      - [1) Use an array marker (C-style)](#1-use-an-array-marker-c-style)
+      - [2) standard library conventions](#2-standard-library-conventions)
+      - [3) explicitly pass a size parameter](#3-explicitly-pass-a-size-parameter)
+    - [array ref parameters](#array-ref-parameters)
+    - ["multidimensional" array parameters](#multidimensional-array-parameters)
+    - [```main()``` handling CLI options](#main-handling-cli-options)
+    - [functions with varying parameters](#functions-with-varying-parameters)
+      - [```initializer_list``` parameters](#initializer_list-parameters)
+      - [ellipsis parameters ```...```](#ellipsis-parameters-)
 
 
 # Compilation Process
@@ -411,3 +430,129 @@ try {
 
 * ```exception``` header defined general exceptions
 * ```stdexcept``` defines several general purpose exceptions. The exception types define a single operation ```what```. it accepts a ```const char*```, and its purpose is to give context.
+
+# 6) Functions
+
+## function return types
+* function return type cannot be an array type or a function type
+* function return types can be pointers to arrays or functions
+  
+## ```static```
+* local static objects are not destroyed when a function ends. They are destroyed when the program ends.
+  
+```cpp
+size_t count_calls()
+{
+ static size_t ctr = 0; // value will persist across calls
+ return ++ctr;
+}
+
+int main()
+{
+  for (size_t i = 0; i != 10; ++i){
+    cout << count_calls() << endl;
+  return 0;
+  } 
+}
+```
+
+## function declarations
+* put function prototypes in header files
+
+## seperate compilation
+
+* can either seperately compile every cpp file into multiple executeables or link them into one.
+  
+## Argument Passing
+
+### Pointer Parameters
+
+```cpp
+// function that takes a pointer and sets the pointed-to value to zero
+void reset(int *ip)
+{
+ *ip = 0; // changes the value of the object to which ip points
+ ip = 0; // changes only the local copy of ip; the argument is unchanged
+}
+
+int main(){
+  int i = 42;
+  reset(&i);// changes i but not the address of i
+  cout << "i = " << i << endl; 
+}
+```
+
+### Reference Parameters
+
+```cpp
+void reset(int &i) {
+    i = 0;
+}
+
+int main()
+{
+    int x = 5;
+    
+    reset(x); // x becomes 0.
+
+    cout << x;
+}
+
+```
+
+### ```const``` parameters
+
+* keep in mind the difference between top-level and low-level const.
+* can init object with low level const from a non-const object, but not vice versa.
+* use **const refs** instead of **refs** when only reading the value and not changing it.
+
+### Array parameters
+
+* cannot copy an array, so we cannot pass an array by value. Because arrays are converted to pointers, when we pass an array to a function, we are actually passing a pointer to the array's first element.
+* because arrays are passed as pointers, functions don't know the size of the array. **we can manage pointer parameters in different ways**.
+
+#### 1) Use an array marker (C-style)
+* e.g. null character for the last element.
+
+#### 2) standard library conventions
+* can post parameters pointing to both the beginning and end of array. recall ```begin()``` and ```end()```.
+
+#### 3) explicitly pass a size parameter
+* define a second parameter, explicitly stating the size of the array.
+
+### array ref parameters
+
+```cpp
+// ok: parameter is a reference to an array; the dimension is part of the type
+// parantheses around arr are necessary
+void print(int (&arr)[10])
+{
+ for (auto elem : arr) cout << elem << endl;
+}
+```
+
+### "multidimensional" array parameters
+* i.e array of arrays.
+```cpp
+// matrix points to the first element in an array whose elements are arrays of ten ints
+void print(int (*matrix)[10], int rowSize) { /* . . . */ }
+```
+
+### ```main()``` handling CLI options
+
+* can pass args to main to handle CL options when running executeable.
+
+### functions with varying parameters
+
+#### ```initializer_list``` parameters
+* we can write a fct that takes an unknown number of args of same type by using an ```initializer_list``` parameter.
+*  It's a library type that represents an array of values of specified type.
+*  ```initializer_list``` is a template type, like ```vector```.
+*  they have the same begin and end operations as in vector.
+*  elements in the init_list are always const.
+*  they are defined with curly braces.
+  
+#### ellipsis parameters ```...```
+* ellipisis params are used to itnerface with a C lib named ```varargs```.
+
+**page 315**
