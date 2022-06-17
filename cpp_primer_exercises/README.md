@@ -52,6 +52,12 @@
     - [functions with varying parameters](#functions-with-varying-parameters)
       - [```initializer_list``` parameters](#initializer_list-parameters)
       - [ellipsis parameters ```...```](#ellipsis-parameters-)
+  - [Aids for debugging](#aids-for-debugging)
+  - [Pointers to functions](#pointers-to-functions)
+- [16 Templates & Generic Programming](#16-templates--generic-programming)
+  - [Defining a templates](#defining-a-templates)
+    - [non-type template parameters](#non-type-template-parameters)
+    - [Template compilation](#template-compilation)
 
 
 # Compilation Process
@@ -555,4 +561,119 @@ void print(int (*matrix)[10], int rowSize) { /* . . . */ }
 #### ellipsis parameters ```...```
 * ellipisis params are used to itnerface with a C lib named ```varargs```.
 
+## Aids for debugging
+
+* ```assert``` is a function which checks if given condition is true, which comes from the ```cassert``` header. We can define a preprocessor variable ```NDEBUG``` to only run the asserts for debugging purposes
+* ```__func__``` - returns the name of function that it's being called from.
+* ```__file__``` - returns string literal containing name of file
+* ```__line__``` - integer literal containing current line number
+* ```__time__``` - string literal containing time file was compiled
+* ```__date__``` - string literal containing date file was compiled
+
+## Pointers to functions
+* Like with objects, a function pointer points to a particular type.
+
+```cpp
+// compares lengths of two strings
+bool lengthCompare(const string &, const string &);
+// pf points to a function returning bool that takes two const string references
+bool (*pf)(const string &, const string &); // uninitialized
+```
+* we can assign the address of ```lengthCompare``` to ```pf``` as follows:
+```cpp
+pf = lengthCompare; // pf now points to the function named lengthCompare
+pf = &lengthCompare; // equivalent assignment: address-of operator is optional
+```
+* and we can call the function as follows:
+```cpp
+bool b1 = pf("hello", "goodbye"); // calls lengthCompare
+bool b2 = (*pf)("hello", "goodbye"); // equivalent call
+bool b3 = lengthCompare("hello", "goodbye"); // equivalent call
+```
+* pointer to function must match the functions return type and parameters.
+```cpp
+string::size_type sumLength(const string&, const string&);
+bool cstringCompare(const char*, const char*);
+pf = 0; // ok: pf points to no function
+pf = sumLength; // error: return type differs
+pf = cstringCompare; // error: parameter types differ
+pf = lengthCompare; // ok: function and pointer types match exactly
+```
+* as with arrays, we can't define parameters with functions but can have a parameter that is a pointer to a function.
+
+```cpp
+// third parameter is a function type and is automatically treated as a pointer to function
+void useBigger(const string &s1, const string &s2,
+bool pf(const string &, const string &));
+// equivalent declaration: explicitly define the parameter as a pointer to function
+void useBigger(const string &s1, const string &s2,
+bool (*pf)(const string &, const string &));
+```
+
+# 16 Templates & Generic Programming
+
+## Defining a templates
+
+```cpp
+// returns 0 if the values are equal, -1 if v1 is smaller, 1 if v2 is smaller
+int compare(const string &v1, const string &v2)
+{
+ if (v1 < v2) return -1;
+if (v2 < v1) return 1; return 0;
+}
+
+int compare(const double &v1, const double &v2)
+{
+if (v1 < v2) return -1;
+if (v2 < v1) return 1; return 0;
+}
+
+```
+
+* above functions are identical apart from parameters. Instead of rewriting each function like this, we can define a template. ( can use keyword ```typename```/```class``` interchangeably here.)
+
+```cpp
+template <typename T>
+
+int compare(const T &v1, const T &v2)
+{
+ if (v1 < v2) return -1; if (v2 < v1) return 1; return 0;
+}
+
+cout << compare(1, 0) << endl; // T is int
+
+vector<int> vec1{1, 2, 3}, vec2{4, 5, 6};
+cout << compare(vec1, vec2) << endl; // T is vector<int>
+
+```
+
+### non-type template parameters
+
+* a non-type parameter represents a value rather than a type. These values must be constant expressions.
+
+```cpp
+template<unsigned N, unsigned M>
+int compare(const char (&p1)[N], const char (&p2)[M])
+{
+ return strcmp(p1, p2);
+}
+
+// then if we do:
+compare("hi", "mom");
+// compiler will isntantiate (size of each string literal + null char)
+// int compare(const char (&p1)[3], const char (&p2)[4])
+
+
+```
+
+### Template compilation
+
+* when compiler sees definition of a template, it does not generate new code. It generates code only when we instantiate a specific instance of the template.
+* we put function declarations and class definitions in header files for the compiler. The case is different with templates.
+* Compiler needs to have the code for the definition of templates. **Hence, headers for templates include definitions as well as declarations**.
+
+### Class Templates
+
+* class templates differ from function templates in that the compiler cannot deduce the template parameter types. We'll need to supply this extra information inside angle brackets.
+* 
 **page 315**
